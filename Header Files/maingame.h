@@ -6,32 +6,61 @@
 namespace GAME{
 	struct baseinfo{
 		bool col[20][20];
-		int map[20][20],turns,siz;
+		int map[20][20];
+		int turns,siz;
 	};
+
 	HANDLE GameOut;
+	HANDLE BufOut;
+	COORD coord={0,0};
+	
 	class maingame{
-		bool color[20][20],pf;
+		bool color[20][20];
 		int need[20][20],map[20][20];
 		int turns,nowx,nowy,size;
-		void init(int sz)
-		{
+		char Scdata[1000];
+		
+		void init(int sz){
+			//获取句柄
+			GameOut=GetStdHandle(STD_OUTPUT_HANDLE);
+
+            //建立缓冲
+			BufOut=CreateConsoleScreenBuffer(
+				GENERIC_READ | GENERIC_WRITE,
+				FILE_SHARE_READ | FILE_SHARE_WRITE,
+		        NULL,
+		        CONSOLE_TEXTMODE_BUFFER,
+		        NULL
+			);
+			//SetConsoleActiveScreenBuffer(BufOut);
+			
+			//隐藏光标
+			CONSOLE_CURSOR_INFO cci;
+    		GetConsoleCursorInfo(GameOut,&cci);
+			cci.bVisible=false;
+    		SetConsoleCursorInfo(GameOut,&cci);
+    		SetConsoleCursorInfo(BufOut,&cci);
+			
+			//设置变量
 			turns=1,nowx=1,nowy=1,size=sz;
-			memset(map,0x3f,sizeof map);
-			for(int i=1;i<=size;i++)
-			{
-				for(int j=1;j<=size;j++)
-				{
-					map[i][j]=1;
-					if((i+j)%2==0) color[i][j]=0;
-					else color[i][j]=1;
+			memset(map,0x3f,sizeof(map));
+
+            //创建地图
+			for(int i=1;i<=size;i++){
+				for(int j=1;j<=size;j++){
+					map[i][j]=true;
+					if((i+j)%2==0)
+						color[i][j]=false;
+					else color[i][j]=true;
 					need[i][j]=2;
 				}
 			}
 			for(int i=1;i<=size;i++)
 				for(int j=2;j<=size-1;j++)
 					need[i][j]++,need[j][i]++;
-			for(int i=0;i<=size+1;i++)
-			{
+
+            //特化边界
+			for(int i=0;i<=size+1;i++){
 				need[i][0]=INF+1000000;
 				need[0][i]=INF+1000000;
 				need[size+1-i][0]=INF+10000000;
@@ -39,6 +68,7 @@ namespace GAME{
 			}
 			return ;
 		}
+		
 		double calthr(int wid){
 			int summ=0,sumn=0,cnt=0;
 			for(int i=max(nowx-wid,1);i<=min(nowx+wid,size);i++){
@@ -49,71 +79,84 @@ namespace GAME{
 			double ans=(summ);
 			return ans/(sumn)-(need[nowx][nowy]-map[nowx][nowy])*0.08;
 		}
-		void ptmap()
-		{
-			GameOut=GetStdHandle(STD_OUTPUT_HANDLE);
-			if(pf) system("cls");
-			COORD coord={0,0};
-			SetConsoleCursorPosition(GameOut,coord);
+		
+		//画面绘制
+		void ptmap(){
+			
+			//SetConsoleActiveScreenBuffer(GameOut);
+			//system("cls");
+            //SetConsoleActiveScreenBuffer(BufOut);
+            SetConsoleCursorPosition(GameOut,coord);
 			Setcol(GameOut,0xf);
+
 			#ifndef FDEBUG
 			puts("DEBUG MODE");
 			#endif
+			
+			//全局紧张度：大于100%游戏必定结束
 			double threat=(turns-1.0)/(3.0*(size-2)*(size-2)+2.0*(size-2)*4.0+4.0)*100.0;
 			printf("Turns:%d(%s) \nThreat:%.0lf%\n",turns,(turns&1)?"RED/YELLOW":"BLUE/NAVY",threat);
-			for(int i=size;i>=1;i--)
-			{
-				for(int j=1;j<=size;j++)
-				{
+
+            //绘制地图
+			for(int i=size;i>=1;i--){
+				for(int j=1;j<=size;j++){
+					//设置颜色
 					int tmp=0;
 					if(map[j][i]>need[j][i]-2) tmp|=ForeInt;
 					if(map[j][i]==need[j][i]) tmp|=ForeGreen;
 					if(i==nowy&&j==nowx) tmp|=(BackInt|BackBlue|BackRed|BackGreen);
 					if(!color[j][i]) Setcol(GameOut,ForeBlue|tmp);
 					else Setcol(GameOut,ForeRed|tmp);
+					
+					//输出数据
 					printf("%d",map[j][i]);
 					Setcol(GameOut,0xf); printf(" ");
 				}
 				printf("\n");
 			}
+
+			//地区紧张度：没egg用
 			int ST=(int) (calthr(1)*100.0);
 			printf("SelThreat:%3d%\n",ST);
+			
+			
 			#ifndef FDEBUG
 			printf("need:%d now:%d\n",need[nowx][nowy],map[nowx][nowy]);
 			#endif
-			pf=false;
+			
+			//转录缓冲
+			//DWORD bytes;
+			//ReadConsoleOutputCharacterA(GameOut,Scdata,1000,coord,&bytes);
+			//WriteConsoleOutputCharacterA(BufOut,Scdata,1000,coord,&bytes);
 			return ;
 		}
-		bool chb()
-		{
+
+		//检测爆炸
+		bool chb(){
 			for(int i=1;i<=size;i++)
 				for(int j=1;j<=size;j++)
 					if(map[i][j]>need[i][j]) return true;
 			return false;
 		}
-		int check()
-		{
+		//检测结束
+		int check(){
 			bool rd=true,bl=true;
-			for(int i=1;i<=size;i++)
-			{
-				for(int j=1;j<=size;j++)
-				{
-					if(color[i][j]==0) rd=false;
-					if(color[i][j]==1) bl=false;
+			for(int i=1;i<=size;i++){
+				for(int j=1;j<=size;j++){
+					if(color[i][j]==false) rd=false;
+					if(color[i][j]==true) bl=false;
 				}
 			}
 			if(bl==true) return 1;
 			if(rd==true) return 2;
 			return 0;
 		}
-		void b(int x,int y,int t)
-		{
+		//执行扩散
+		void b(int x,int y,int t){
 			if(check()) return ;
-			//printf("*%d %d\n",x,y);
 			int n=size;
 			if(x<=0||y<=0||x>=size+1||y>=size+1) return ;
-			if(map[x][y]>need[x][y])
-			{
+			if(map[x][y]>need[x][y]){
 				map[x][y]-=need[x][y];
 				map[x-1][y]++;color[x-1][y]=t;b(x-1,y,t);
 				map[x+1][y]++;color[x+1][y]=t;b(x+1,y,t);
@@ -122,10 +165,9 @@ namespace GAME{
 			}
 			return ;
 		}
-		void booms(int t)
-		{
-			while(true)
-			{
+		//执行爆炸
+		void booms(int t){
+			while(true){
 				if(!chb()||check()) return ;
 				for(int i=1;i<=size;i++)
 					for(int j=1;j<=size;j++)
@@ -134,9 +176,18 @@ namespace GAME{
 			return ;
 		}
 		public:
-		maingame(int sz){init(sz);}
 		maingame(){init(12);}
+		maingame(int sz){init(sz);}
+		~maingame(){
+			//清除句柄
+			SetConsoleActiveScreenBuffer(GameOut);
+			CloseHandle(BufOut);
+		}
+
+		//启动接口
 		start(){ptmap();}
+
+        //读取接口
 		baseinfo getmap(){
 			baseinfo info;
 			memcpy(info.map,map,sizeof(map));
@@ -145,30 +196,39 @@ namespace GAME{
 			info.turns=turns;
 			return info;
 		}
+
+        //光标接口
 		void setcol(int nx,int ny){nowx=nx;nowy=ny;ptmap();return ;}
+
+        //操作接口
 		int keydown(){
 			if(color[nowx][nowy]!=(turns&1)){
+				//操作失败
 				#ifndef FDEBUG
 				printf("turns:%d color:%d",turns,color[nowx][nowy]);
 				#endif
-				printf("!!请重新选择!!\n");
-				pf=true;
+
+				//printf("!!请重新选择!!\n");
 				return 1; 
 			}
+			
+			//操作成功
 			map[nowx][nowy]++;
 			booms((turns&1));
 			int k=check();
-			if(k!=0){
+			if(k){
+				//游戏结束
 				ptmap();
 				printf("Player %d wins.\n",k%2+1);
 				system("pause");
 				return -1;
 			}
 			++turns;
+			//刷新地图
 			ptmap();
 			return 0;
 		}
 	};
 }
 
-#endif
+#endif //_MAINGAME_H_
