@@ -3,6 +3,8 @@
 #include<windows.h>
 #include<cstdlib>
 #include<cstring>
+#include<iostream>
+#include<algorithm>
 
 #pragma once
 
@@ -10,6 +12,9 @@
 #define _BASE_H_
 
 const int INF=0x3f3f3f3f;
+
+using std::max;
+using std::min;
 
 #define Setcol(hOP,a) SetConsoleTextAttribute(hOP,a)
 #define ForeBlue FOREGROUND_BLUE
