@@ -20,11 +20,11 @@ namespace GAME{
 		int turns,nowx,nowy,size;
 		char Scdata[1000];
 		
-		void init(int sz){
-			//»ñÈ¡¾ä±ú
+		void prepareGame(int sz){
+			//è·å–å¥æŸ„
 			GameOut=GetStdHandle(STD_OUTPUT_HANDLE);
 
-            //½¨Á¢»º³å
+            //å»ºç«‹ç¼“å†²
 			BufOut=CreateConsoleScreenBuffer(
 				GENERIC_READ | GENERIC_WRITE,
 				FILE_SHARE_READ | FILE_SHARE_WRITE,
@@ -34,18 +34,18 @@ namespace GAME{
 			);
 			//SetConsoleActiveScreenBuffer(BufOut);
 			
-			//Òş²Ø¹â±ê
+			//éšè—å…‰æ ‡
 			CONSOLE_CURSOR_INFO cci;
     		GetConsoleCursorInfo(GameOut,&cci);
 			cci.bVisible=false;
     		SetConsoleCursorInfo(GameOut,&cci);
     		SetConsoleCursorInfo(BufOut,&cci);
 			
-			//ÉèÖÃ±äÁ¿
+			//è®¾ç½®å˜é‡
 			turns=1,nowx=1,nowy=1,size=sz;
 			memset(map,0x3f,sizeof(map));
 
-            //´´½¨µØÍ¼
+            //åˆ›å»ºåœ°å›¾
 			for(int i=1;i<=size;i++){
 				for(int j=1;j<=size;j++){
 					map[i][j]=true;
@@ -59,7 +59,7 @@ namespace GAME{
 				for(int j=2;j<=size-1;j++)
 					need[i][j]++,need[j][i]++;
 
-            //ÌØ»¯±ß½ç
+            //ç‰¹åŒ–è¾¹ç•Œ
 			for(int i=0;i<=size+1;i++){
 				need[i][0]=INF+1000000;
 				need[0][i]=INF+1000000;
@@ -80,8 +80,11 @@ namespace GAME{
 			return ans/(sumn)-(need[nowx][nowy]-map[nowx][nowy])*0.08;
 		}
 		
-		//»­Ãæ»æÖÆ
-		void ptmap(){
+		//ç”»é¢ç»˜åˆ¶
+		void setGameMap(){
+			defaultMapBuilder();
+			//xxMapBuilder();
+		void defaultMapBuilder(){
 			
 			//SetConsoleActiveScreenBuffer(GameOut);
 			//system("cls");
@@ -93,14 +96,14 @@ namespace GAME{
 			puts("DEBUG MODE");
 			#endif
 			
-			//È«¾Ö½ôÕÅ¶È£º´óÓÚ100%ÓÎÏ·±Ø¶¨½áÊø
+			//å…¨å±€ç´§å¼ åº¦ï¼šå¤§äº100%æ¸¸æˆå¿…å®šç»“æŸ
 			double threat=(turns-1.0)/(3.0*(size-2)*(size-2)+2.0*(size-2)*4.0+4.0)*100.0;
 			printf("Turns:%d(%s) \nThreat:%.0lf%\n",turns,(turns&1)?"RED/YELLOW":"BLUE/NAVY",threat);
 
-            //»æÖÆµØÍ¼
+            //ç»˜åˆ¶åœ°å›¾
 			for(int i=size;i>=1;i--){
 				for(int j=1;j<=size;j++){
-					//ÉèÖÃÑÕÉ«
+					//è®¾ç½®é¢œè‰²
 					int tmp=0;
 					if(map[j][i]>need[j][i]-2) tmp|=ForeInt;
 					if(map[j][i]==need[j][i]) tmp|=ForeGreen;
@@ -108,14 +111,14 @@ namespace GAME{
 					if(!color[j][i]) Setcol(GameOut,ForeBlue|tmp);
 					else Setcol(GameOut,ForeRed|tmp);
 					
-					//Êä³öÊı¾İ
+					//è¾“å‡ºæ•°æ®
 					printf("%d",map[j][i]);
 					Setcol(GameOut,0xf); printf(" ");
 				}
 				printf("\n");
 			}
 
-			//µØÇø½ôÕÅ¶È£ºÃ»eggÓÃ
+			//åœ°åŒºç´§å¼ åº¦ï¼šæ²¡eggç”¨
 			int ST=(int) (calthr(1)*100.0);
 			printf("SelThreat:%3d%\n",ST);
 			
@@ -124,22 +127,22 @@ namespace GAME{
 			printf("need:%d now:%d\n",need[nowx][nowy],map[nowx][nowy]);
 			#endif
 			
-			//×ªÂ¼»º³å
+			//è½¬å½•ç¼“å†²
 			//DWORD bytes;
 			//ReadConsoleOutputCharacterA(GameOut,Scdata,1000,coord,&bytes);
 			//WriteConsoleOutputCharacterA(BufOut,Scdata,1000,coord,&bytes);
 			return ;
 		}
 
-		//¼ì²â±¬Õ¨
-		bool chb(){
+		//æ£€æµ‹çˆ†ç‚¸
+		bool checkHeadBoom(){
 			for(int i=1;i<=size;i++)
 				for(int j=1;j<=size;j++)
 					if(map[i][j]>need[i][j]) return true;
 			return false;
 		}
-		//¼ì²â½áÊø
-		int check(){
+		//æ£€æµ‹ç»“æŸ
+		int checkGameEnd(){
 			bool rd=true,bl=true;
 			for(int i=1;i<=size;i++){
 				for(int j=1;j<=size;j++){
@@ -151,9 +154,9 @@ namespace GAME{
 			if(rd==true) return 2;
 			return 0;
 		}
-		//Ö´ĞĞÀ©É¢
+		//æ‰§è¡Œæ‰©æ•£
 		void b(int x,int y,int t){
-			if(check()) return ;
+			if(checkGameEnd()) return ;
 			int n=size;
 			if(x<=0||y<=0||x>=size+1||y>=size+1) return ;
 			if(map[x][y]>need[x][y]){
@@ -165,10 +168,10 @@ namespace GAME{
 			}
 			return ;
 		}
-		//Ö´ĞĞ±¬Õ¨
-		void booms(int t){
+		//æ‰§è¡Œçˆ†ç‚¸
+		void doGameBoom(int t){
 			while(true){
-				if(!chb()||check()) return ;
+				if(!checkHeadBoom()||checkGameEnd()) return ;
 				for(int i=1;i<=size;i++)
 					for(int j=1;j<=size;j++)
 						b(i,j,t);
@@ -177,18 +180,18 @@ namespace GAME{
 		}
 		
 		public:
-		maingame(){init(12);}
-		maingame(int sz){init(sz);}
+		maingame(){prepareGame(12);}
+		maingame(int sz){prepareGame(sz);}
 		~maingame(){
-			//Çå³ı¾ä±ú
+			//æ¸…é™¤å¥æŸ„
 			SetConsoleActiveScreenBuffer(GameOut);
 			CloseHandle(BufOut);
 		}
 
-		//Æô¶¯½Ó¿Ú
-		start(){ptmap();}
+		//å¯åŠ¨æ¥å£
+		start(){setGameMap();}
 
-        //¶ÁÈ¡½Ó¿Ú
+        //è¯»å–æ¥å£
 		baseinfo getmap(){
 			baseinfo info;
 			memcpy(info.map,map,sizeof(map));
@@ -198,35 +201,35 @@ namespace GAME{
 			return info;
 		}
 
-        //¹â±ê½Ó¿Ú
-		void setcol(int nx,int ny){nowx=nx;nowy=ny;ptmap();return ;}
+        //å…‰æ ‡æ¥å£
+		void setcol(int nx,int ny){nowx=nx;nowy=ny;setGameMap();return ;}
 
-        //²Ù×÷½Ó¿Ú
+        //æ“ä½œæ¥å£
 		int keydown(){
 			if(color[nowx][nowy]!=(turns&1)){
-				//²Ù×÷Ê§°Ü
+				//æ“ä½œå¤±è´¥
 				#ifndef FDEBUG
 				printf("turns:%d color:%d",turns,color[nowx][nowy]);
 				#endif
 
-				//printf("!!ÇëÖØĞÂÑ¡Ôñ!!\n");
+				//printf("!!è¯·é‡æ–°é€‰æ‹©!!\n");
 				return 1; 
 			}
 			
-			//²Ù×÷³É¹¦
+			//æ“ä½œæˆåŠŸ
 			map[nowx][nowy]++;
-			booms((turns&1));
-			int k=check();
+			doGameBoom((turns&1));
+			int k=checkGameEnd();
 			if(k){
-				//ÓÎÏ·½áÊø
-				ptmap();
+				//æ¸¸æˆç»“æŸ
+				setGameMap();
 				printf("Player %d wins.\n",k%2+1);
 				system("pause");
 				return -1;
 			}
 			++turns;
-			//Ë¢ĞÂµØÍ¼
-			ptmap();
+			//åˆ·æ–°åœ°å›¾
+			setGameMap();
 			return 0;
 		}
 	};
