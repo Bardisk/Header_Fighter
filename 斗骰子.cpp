@@ -77,10 +77,11 @@ int main()
 		printf("nowx:%d nowy:%d turns:%d\n",nowx,nowy,turns);
 		puts("**************************");
 		#endif
-		
+		CloseHandle(hOutput);
 		return 0;
 	}
-	if(mode==1){ //AivsPer
+	//Ä¬ÈÏAI 
+	if(mode==1){
 		
 	}
 	CloseHandle(hOutput);

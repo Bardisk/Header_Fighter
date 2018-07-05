@@ -175,6 +175,7 @@ namespace GAME{
 			}
 			return ;
 		}
+		
 		public:
 		maingame(){init(12);}
 		maingame(int sz){init(sz);}
