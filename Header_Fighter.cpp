@@ -21,6 +21,31 @@ int main(){
 
 	//SMALL_RECT rc=(SMALL_RECT){0,0,200,200};
     //SetConsoleWindowInfo(hOutput,true,&rc);
+    Setcol(hOutput,ForeBlue|ForeGreen|ForeInt);
+    printf("\nHeader_Fighter!\n");
+    Sleep(2000);
+    printf("\nReleased by ASFNUCR\n");
+    Sleep(2000);
+    Setcol(hOutput,0xf);
+    printf("\noriginal designer&director:");
+    Setcol(hOutput,ForeGreen|ForeInt);
+	printf("lzier\n");
+    Sleep(2000);
+    Setcol(hOutput,0xf);
+    printf("\nadapters:");
+	Setcol(hOutput,ForeBlue|ForeInt);
+	printf("Smokey_Days,Bardisk\n");
+    Sleep(2000);
+    Setcol(hOutput,0xf);
+    printf("\njavascript:");
+    Setcol(hOutput,ForeRed|ForeGreen|ForeInt);
+	printf("Hotwords123\n");
+    Sleep(2000);
+    Setcol(hOutput,0xf);
+    printf("\nGameStart!\n");
+    Setcol(hOutput,0xf);
+    Sleep(1000);
+    system("cls");
 
 	printf("SIZE?\n"); scanf("%d",&size);
     printf("MODE?\n"); scanf("%d",&mode);
