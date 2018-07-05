@@ -4,12 +4,6 @@
 #define _MAINGAME_H_
 
 namespace GAME{
-	struct baseinfo{
-		bool col[20][20];
-		int map[20][20];
-		int turns,siz;
-	};
-
 	HANDLE GameOut;
 	HANDLE BufOut;
 	COORD coord={0,0};
@@ -18,7 +12,7 @@ namespace GAME{
 		bool color[20][20];
 		int need[20][20],map[20][20];
 		int turns,nowx,nowy,size;
-		char Scdata[1000];
+		//char Scdata[1000];
 		
 		void prepareGame(int sz){
 			GameOut=GetStdHandle(STD_OUTPUT_HANDLE);
@@ -66,7 +60,9 @@ namespace GAME{
 		double calculationTemperature(int wid){
 			int summ=0,sumn=0,cnt=0;
 			for(int i=max(nowx-wid,1);i<=min(nowx+wid,size);i++){
-				for(int j=max(nowy-wid,1);j<=min(nowy+wid,size);j++){
+				int minl=max(nowy-wid+abs(i-nowx),1);
+				int maxr=min(nowy+wid-abs(i-nowx),size);
+				for(int j=minl;j<=maxr;j++){
 					summ+=map[i][j];sumn+=need[i][j];++cnt;
 				}
 			}
@@ -74,10 +70,18 @@ namespace GAME{
 			return ans/(sumn)-(need[nowx][nowy]-map[nowx][nowy])*0.08;
 		}
 		
-		void setGameMap(){
-			defaultMapBuilder();
+		void setGameMap(baseinfo newmap){
 			//xxMapBuilder();
+			memcpy(map,newmap.map,sizeof map);
+			memcpy(color,newmap.col,sizeof color);
+			size=newmap.siz;
+			turns=newmap.turns;
+			nowx=1; nowy=1;
+			system("cls");
+			defaultMapBuilder();
+			return ;
 		}
+		
 		void defaultMapBuilder(){
 			
 			//SetConsoleActiveScreenBuffer(GameOut);
@@ -108,13 +112,8 @@ namespace GAME{
 				printf("\n");
 			}
 
-<<<<<<< HEAD
-			int ST=(int) (calthr(1)*100.0);
-=======
-			int ST=(int) (calculationTemperature(1)*100.0);
->>>>>>> cde326930b9719ccc7a8c5a79e2e012636844300
+			int ST=(int) (calculationTemperature(2)*100.0);
 			printf("SelThreat:%3d%\n",ST);
-			
 			
 			#ifndef FDEBUG
 			printf("need:%d now:%d\n",need[nowx][nowy],map[nowx][nowy]);
@@ -175,7 +174,12 @@ namespace GAME{
 			CloseHandle(BufOut);
 		}
 
-		start(){setGameMap();}
+		void start(bool isFile,baseinfo oldmap){
+			if(isFile)
+				setGameMap(oldmap);
+			else defaultMapBuilder();
+			return ;
+		}
 
 		baseinfo getmap(){
 			baseinfo info;
@@ -186,7 +190,9 @@ namespace GAME{
 			return info;
 		}
 
-		void setcol(int nx,int ny){nowx=nx;nowy=ny;setGameMap();return ;}
+		void setcol(int nx,int ny){nowx=nx;nowy=ny;defaultMapBuilder();return ;}
+
+		void reset(baseinfo newmap){setGameMap(newmap);return;}
 
 		int keydown(){
 			if(color[nowx][nowy]!=(turns&1)){
@@ -201,13 +207,13 @@ namespace GAME{
 			doGameBoom((turns&1));
 			int k=checkGameEnd();
 			if(k){
-				setGameMap();
+				defaultMapBuilder();
 				printf("Player %d wins.\n",k%2+1);
 				system("pause");
 				return -1;
 			}
 			++turns;
-			setGameMap();
+			defaultMapBuilder();
 			return 0;
 		}
 	};

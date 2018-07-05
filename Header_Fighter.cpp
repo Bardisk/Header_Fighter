@@ -1,10 +1,12 @@
 #define FDEBUG
 
 #include "Header Files/maingame.h"
+#include "Header Files/testai.h"
 
 int size,mode,turns=1,nowx=1,nowy=1,aiturn;
 
 int main(){
+	srand(time(0));
 	SetConsoleTitle("Header_Fighter Releaese By Computer Rooms");
 	system("mode con cols=40 lines=20");
 
@@ -25,7 +27,7 @@ int main(){
     printf("aiturn?\n"); scanf("%d",&aiturn);
 
 	GAME::maingame game(size);
-    game.start();
+    game.start(0,(baseinfo){});
     
     if(mode==0){
 		while(true){
