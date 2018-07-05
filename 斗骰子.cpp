@@ -1,12 +1,10 @@
-#include "Header Files/maingame.h"
+#define FDEBUG
 
-//#define FDEBUG
+#include "Header Files/maingame.h"
 
 int size,mode,turns=1,nowx=1,nowy=1,aiturn;
 
-int main()
-{
-	//窗口基设
+int main(){
 	SetConsoleTitle("Header_Fighter Releaese By Computer Rooms");
 	system("mode con cols=40 lines=20");
 
@@ -22,20 +20,16 @@ int main()
 	//SMALL_RECT rc=(SMALL_RECT){0,0,200,200};
     //SetConsoleWindowInfo(hOutput,true,&rc);
 
-	//初始设置
-	printf("大小？\n"); scanf("%d",&size);
-    printf("模式？\n"); scanf("%d",&mode);
-    printf("ai先后？\n"); scanf("%d",&aiturn);
+	printf("SIZE?\n"); scanf("%d",&size);
+    printf("MODE?\n"); scanf("%d",&mode);
+    printf("aiturn?\n"); scanf("%d",&aiturn);
 
-    //启动游戏
 	GAME::maingame game(size);
     game.start();
     
-    //默认模式
     if(mode==0){
 		while(true){
 			while(1){
-				//执行移动
 				char ch=getch();
 				if(ch=='W'||ch=='w'){
 					if(nowy<size){
@@ -80,7 +74,6 @@ int main()
 		CloseHandle(hOutput);
 		return 0;
 	}
-	//默认AI 
 	if(mode==1){
 		
 	}
