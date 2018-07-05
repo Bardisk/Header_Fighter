@@ -1,6 +1,6 @@
 [Project]
-FileName=¶·÷»×Ó.dev
-Name=¶·÷»×Ó
+FileName=Header_Fighter.dev
+Name=Header_Fighter
 Type=1
 Ver=2
 ObjFiles=
@@ -13,13 +13,13 @@ Compiler=
 CppCompiler=
 Linker=
 IsCpp=1
-Icon=¶·÷»×Ó.ico
+Icon=Header_Fighter.ico
 ExeOutput=
 ObjectOutput=
 LogOutput=
 LogOutputEnabled=0
 OverrideOutput=0
-OverrideOutputName=¶·÷»×Ó.exe
+OverrideOutputName=Header_Fighter.exe
 HostApplication=
 UseCustomMakefile=0
 CustomMakefile=
@@ -29,7 +29,7 @@ IncludeVersionInfo=1
 SupportXPThemes=0
 CompilerSet=4
 CompilerSettings=0000000100000000001000000
-UnitCount=3
+UnitCount=4
 
 [VersionInfo]
 Major=0
@@ -51,16 +51,6 @@ AutoIncBuildNr=0
 SyncProduct=1
 
 [Unit1]
-FileName=¶·÷»×Ó.cpp
-CompileCpp=1
-Folder=
-Compile=1
-Link=1
-Priority=1000
-OverrideBuildCmd=0
-BuildCmd=
-
-[Unit2]
 FileName=Header Files\base.h
 CompileCpp=1
 Folder=Header Files
@@ -70,8 +60,28 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit3]
+[Unit2]
 FileName=Header Files\testai.h
+CompileCpp=1
+Folder=Header Files
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit3]
+FileName=Header Files\maingame.h
+CompileCpp=1
+Folder=Header Files
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit4]
+FileName=Header_Fighter.cpp
 CompileCpp=1
 Folder=
 Compile=1

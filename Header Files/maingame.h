@@ -63,7 +63,7 @@ namespace GAME{
 			return ;
 		}
 		
-		double calthr(int wid){
+		double calculationTemperature(int wid){
 			int summ=0,sumn=0,cnt=0;
 			for(int i=max(nowx-wid,1);i<=min(nowx+wid,size);i++){
 				for(int j=max(nowy-wid,1);j<=min(nowy+wid,size);j++){
@@ -108,7 +108,11 @@ namespace GAME{
 				printf("\n");
 			}
 
+<<<<<<< HEAD
 			int ST=(int) (calthr(1)*100.0);
+=======
+			int ST=(int) (calculationTemperature(1)*100.0);
+>>>>>>> cde326930b9719ccc7a8c5a79e2e012636844300
 			printf("SelThreat:%3d%\n",ST);
 			
 			
