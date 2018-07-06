@@ -51,8 +51,9 @@ int main(){
     printf("MODE?\n"); scanf("%d",&mode);
     printf("aiturn?\n"); scanf("%d",&aiturn);
 
+	baseinfo unuse;
 	GAME::maingame game(size);
-    game.start(0,(baseinfo){});
+    game.start(0,unuse);
     
     if(mode==0){
 		while(true){
