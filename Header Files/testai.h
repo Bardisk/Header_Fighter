@@ -48,19 +48,20 @@ namespace barAi{
 			double ans=(summ)/(sumn)-(need[dx][dy]-map[dx][dy])*0.08;
             if(dx<size)
 				ans+=(col[dx+1][dy]^turn)*map[dx+1][dy]*0.03;
-			else ans-=0.03;
 			if(dx>1)
 				ans+=(col[dx-1][dy]^turn)*map[dx-1][dy]*0.03;
-			else ans-=0.03;
 			if(dy<size)
 				ans+=(col[dx][dy+1]^turn)*map[dx][dy+1]*0.03;
-            else ans-=0.03;
 			if(dy<1)
 				ans+=(col[dx][dy-1]^turn)*map[dx][dy-1]*0.03;
-			else ans-=0.03;
 			return ans;
 		}
-		aiReturn doChoice(){
+		public:
+		barMachine(){initalGameNeed();}
+		//~barMachine(){}
+		aiReturn doChoice(baseinfo nowgame){
+			while(!q.empty()) q.pop();
+			initalGameStatus(nowgame);
 			int tmp;
 			for(int i=1;i<=size;i++){
 				for(int j=1;j<=size;j++){
@@ -70,13 +71,15 @@ namespace barAi{
 					}
 				}
 			}
-			choice choices[10];
-			for(int i=0;i<10;i++){
-				choices[i]=q.top();
+			choice *chi;
+			chi=new choice [1];
+			for(int i=0;i<1;i++){
+				chi[i]=q.top();
 				q.pop();
 			}
-			int res=rand()%10;
-			return make_pair(choices[res].dx,choices[res].dy);
+			int res=rand()%(1);
+			return make_pair(chi[res].dx,chi[res].dy);
+			delete[] chi;
 		}
 	};
 }
