@@ -46,14 +46,14 @@ namespace barAi{
 				}
 			}
 			double ans=(summ)/(sumn)-(need[dx][dy]-map[dx][dy])*0.08;
-            if(dx<size)
-				ans+=(col[dx+1][dy]^turn)*map[dx+1][dy]*0.03;
-			if(dx>1)
-				ans+=(col[dx-1][dy]^turn)*map[dx-1][dy]*0.03;
-			if(dy<size)
-				ans+=(col[dx][dy+1]^turn)*map[dx][dy+1]*0.03;
-			if(dy<1)
-				ans+=(col[dx][dy-1]^turn)*map[dx][dy-1]*0.03;
+            if(dx<size-1)
+				ans+=(col[dx+2][dy]^turn)*map[dx+1][dy]*0.03;
+			if(dx>2)
+				ans+=(col[dx-2][dy]^turn)*map[dx-1][dy]*0.03;
+			if(dy<size-1)
+				ans+=(col[dx][dy+2]^turn)*map[dx][dy+1]*0.03;
+			if(dy<2)
+				ans+=(col[dx][dy-2]^turn)*map[dx][dy-1]*0.03;
 			return ans;
 		}
 		public:
