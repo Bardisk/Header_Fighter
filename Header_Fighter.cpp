@@ -107,7 +107,7 @@ int main(){
 	}
 	//Person vs LocalAi
 	if(mode==1){
-		barAi::barMachine ai;
+		barAi::barMachine ai(size);
 		baseinfo numap;
 		while(1){
 			numap=game.getmap();
@@ -157,8 +157,8 @@ int main(){
 	}
 	//LocalAi vs LocalAi
 	if(mode==2){
-		barAi::barMachine ai1;
-		barAi::barMachine ai2;
+		barAi::barMachine ai1(size);
+		barAi::barMachine ai2(size);
 		baseinfo numap;
 		while(1){
 			numap=game.getmap();
