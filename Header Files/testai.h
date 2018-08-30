@@ -57,7 +57,8 @@ namespace barAi{
 			return ans;
 		}
 		public:
-		barMachine(){initalGameNeed();}
+		barMachine(){size=10;initalGameNeed();}
+		barMachine(int entrySize){size=entrySize;initalGameNeed();}
 		//~barMachine(){}
 		aiReturn doChoice(baseinfo nowgame){
 			while(!q.empty()) q.pop();
